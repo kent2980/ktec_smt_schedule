@@ -1,5 +1,5 @@
 [project]
-name = "get-ktec-smt-schedule"
+name = "ktec_smt_schedule"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
