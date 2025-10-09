@@ -8,16 +8,17 @@ from pathlib import Path
 class SMTSchedule:
 
     @staticmethod
-    def get_lot_info(dir_path: str, line_code: str) -> pd.DataFrame:
+    def get_lot_info(dir_path: str, line_code: str) -> Dict[str, LotInfo]:
         """
-        ExcelファイルのアクティブシートをDataFrameとして読み取る
+        ExcelファイルのアクティブシートからLotInfo辞書を生成する
         .xlsx と .xls 形式に対応
 
         Args:
-            path (str): Excelファイルのパス (.xlsx または .xls)
+            dir_path (str): Excelファイルが格納されているディレクトリパス
+            line_code (str): ライン識別コード
 
         Returns:
-            pd.DataFrame: アクティブシートのデータ
+            Dict[str, LotInfo]: ロット番号をキーとするLotInfo辞書
         """
         project_dir = Path(__file__).resolve().parent.parent
 
