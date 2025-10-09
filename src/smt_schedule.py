@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from src.lot_info import LotInfo
+from .lot_info import LotInfo
 from typing import Dict
 from pathlib import Path
 
@@ -114,7 +114,7 @@ class SMTSchedule:
             line_code = f"GC{code:02d}"
             print(f"Processing {line_code}.xls")
             try:
-                lot_info_dict: pd.DataFrame = get_lot_info(dir_path, line_code)
+                lot_info_dict = SMTSchedule.get_lot_info(dir_path, line_code)  # 修正
                 if lot_info_dict:
                     df = pd.DataFrame([vars(info) for info in lot_info_dict.values()])
                     df_list.append(df)
