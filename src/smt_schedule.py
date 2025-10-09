@@ -1,6 +1,6 @@
 import pandas as pd
 import os
-from lot_info import LotInfo
+from src.lot_info import LotInfo
 from typing import Dict
 from pathlib import Path
 
