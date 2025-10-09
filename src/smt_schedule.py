@@ -115,7 +115,7 @@ class SMTSchedule:
         指定された範囲内で最初に見つかった有効なExcelファイルを読み込み、LotInfoのDataFrameを連結して返す
         """
         df_list = []
-        for code in range(start_line, end_line):
+        for code in range(start_line, end_line + 1):
             line_code = f"GC{code:02d}"
             print(f"Processing {line_code}.xls")
             try:
