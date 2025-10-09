@@ -8,9 +8,9 @@ from pathlib import Path
 class SMTSchedule:
 
     @staticmethod
-    def get_lot_info(dir_path: str, line_code: str) -> Dict[str, LotInfo]:
+    def get_lot_info(dir_path: str, line_code: str) -> pd.DataFrame:
         """
-        ExcelファイルのアクティブシートからLotInfo辞書を生成する
+        ExcelファイルのアクティブシートからLotInfoのDataFrameを生成する
         .xlsx と .xls 形式に対応
 
         Args:
@@ -18,7 +18,7 @@ class SMTSchedule:
             line_code (str): ライン識別コード
 
         Returns:
-            Dict[str, LotInfo]: ロット番号をキーとするLotInfo辞書
+            pd.DataFrame: LotInfo情報を含むDataFrame
         """
         project_dir = Path(__file__).resolve().parent.parent
 
@@ -96,7 +96,11 @@ class SMTSchedule:
                             f"行の処理中にエラーが発生しました (行番号: {index + 1}): {e}"
                         )
                         continue
-                return lot_info_dict
+                # 辞書をDataFrameに変換して返す
+                if lot_info_dict:
+                    return pd.DataFrame([vars(info) for info in lot_info_dict.values()])
+                else:
+                    return pd.DataFrame()
             else:
                 raise ValueError(
                     f"サポートされていないファイル形式です: {ext}。.xlsx または .xlsb ファイルを使用してください。"
@@ -115,9 +119,8 @@ class SMTSchedule:
             line_code = f"GC{code:02d}"
             print(f"Processing {line_code}.xls")
             try:
-                lot_info_dict = SMTSchedule.get_lot_info(dir_path, line_code)  # 修正
-                if lot_info_dict:
-                    df = pd.DataFrame([vars(info) for info in lot_info_dict.values()])
+                df = SMTSchedule.get_lot_info(dir_path, line_code)
+                if not df.empty:
                     df_list.append(df)
             except FileNotFoundError:
                 print(f"ファイルが見つかりません: {line_code}.xls")
