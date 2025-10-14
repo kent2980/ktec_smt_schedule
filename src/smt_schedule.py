@@ -117,7 +117,6 @@ class SMTSchedule:
         df_list = []
         for code in range(start_line, end_line + 1):
             line_code = f"GC{code:02d}"
-            print(f"Processing {line_code}.xls")
             try:
                 df = SMTSchedule.get_lot_info(dir_path, line_code)
                 if not df.empty:
