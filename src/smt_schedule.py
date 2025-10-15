@@ -46,7 +46,14 @@ class SMTSchedule:
                 df = df[
                     pd.to_numeric(df.iloc[:, 36], errors="coerce").notna()
                 ].reset_index(drop=True)
-                df.to_csv(Path.joinpath(project_dir, "out.csv").as_posix())
+
+                # UTF-8-BOMエンコーディングでCSVファイルを出力
+                df.to_csv(
+                    Path.joinpath(project_dir, "out.csv").as_posix(),
+                    encoding="utf-8-sig",  # UTF-8-BOMエンコーディングを指定
+                    index=False,
+                )
+
                 # dfから
                 i = 0
                 lot_info_dict: Dict[str, LotInfo] = {}
@@ -113,10 +120,12 @@ class SMTSchedule:
     def get_lot_infos(dir_path: str, start_line: int, end_line: int) -> pd.DataFrame:
         """
         指定された範囲内で最初に見つかった有効なExcelファイルを読み込み、LotInfoのDataFrameを連結して返す
+        UTF-8-BOMエンコーディングでCSVファイルを出力
         """
         df_list = []
         for code in range(start_line, end_line + 1):
             line_code = f"GC{code:02d}"
+            print(f"Processing {line_code}.xls")
             try:
                 df = SMTSchedule.get_lot_info(dir_path, line_code)
                 if not df.empty:
@@ -129,5 +138,50 @@ class SMTSchedule:
                 continue
 
         if df_list:
-            return pd.concat(df_list, ignore_index=True)
+            combined_df = pd.concat(df_list, ignore_index=True)
+
+            # プロジェクトルートディレクトリを取得
+            project_dir = Path(__file__).resolve().parent.parent
+
+            # UTF-8-BOMエンコーディングでout_all.csvファイルを出力
+            combined_df.to_csv(
+                Path.joinpath(project_dir, "out_all.csv").as_posix(),
+                encoding="utf-8-sig",  # UTF-8-BOMエンコーディングを指定
+                index=False,
+            )
+
+            return combined_df
         return pd.DataFrame()
+
+    @staticmethod
+    def read_csv_utf8_bom(file_path: str) -> pd.DataFrame:
+        """
+        UTF-8-BOMエンコーディングでCSVファイルを読み込む
+
+        Args:
+            file_path (str): CSVファイルのパス
+
+        Returns:
+            pd.DataFrame: 読み込んだデータフレーム
+        """
+        try:
+            return pd.read_csv(file_path, encoding="utf-8-sig")
+        except Exception as e:
+            print(f"CSV読み込みエラー: {str(e)}")
+            return pd.DataFrame()
+
+    @staticmethod
+    def save_csv_utf8_bom(df: pd.DataFrame, file_path: str, index: bool = False):
+        """
+        UTF-8-BOMエンコーディングでCSVファイルを保存する
+
+        Args:
+            df (pd.DataFrame): 保存するデータフレーム
+            file_path (str): 保存先ファイルパス
+            index (bool): インデックスを含めるかどうか
+        """
+        try:
+            df.to_csv(file_path, encoding="utf-8-sig", index=index)
+            print(f"CSVファイルを保存しました: {file_path}")
+        except Exception as e:
+            print(f"CSV保存エラー: {str(e)}")
