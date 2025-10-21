@@ -10,13 +10,9 @@ from pathlib import Path
 from unittest.mock import patch, MagicMock
 import sys
 
-# プロジェクトのsrcディレクトリをパスに追加
-project_root = Path(__file__).parent.parent
-src_path = project_root / "src"
-sys.path.insert(0, str(src_path))
-
-from smt_schedule import SMTSchedule
-from lot_info import LotInfo
+# パッケージからインポート
+from ktec_smt_schedule.smt_schedule import SMTSchedule
+from ktec_smt_schedule.lot_info import LotInfo
 
 
 class TestSMTSchedule:
@@ -137,7 +133,7 @@ class TestSMTSchedule:
         with pytest.raises(Exception, match="ファイル読み取りエラー"):
             SMTSchedule.get_lot_info(temp_dir, "GC01")
 
-    @patch("smt_schedule.SMTSchedule.get_lot_info")
+    @patch("ktec_smt_schedule.smt_schedule.SMTSchedule.get_lot_info")
     def test_get_lot_infos_success(self, mock_get_lot_info, temp_dir):
         """複数ファイル読み込みのテスト"""
         # モックデータ
@@ -159,7 +155,7 @@ class TestSMTSchedule:
         assert isinstance(result, pd.DataFrame)
         assert len(result) == 4  # 2つのファイル × 2行ずつ
 
-    @patch("smt_schedule.SMTSchedule.get_lot_info")
+    @patch("ktec_smt_schedule.smt_schedule.SMTSchedule.get_lot_info")
     def test_get_lot_infos_empty_result(self, mock_get_lot_info, temp_dir):
         """空の結果のテスト"""
         # 空のDataFrameを返すモック

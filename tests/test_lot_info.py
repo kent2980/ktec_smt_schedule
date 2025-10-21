@@ -7,12 +7,8 @@ from datetime import date
 import sys
 from pathlib import Path
 
-# プロジェクトのsrcディレクトリをパスに追加
-project_root = Path(__file__).parent.parent
-src_path = project_root / "src"
-sys.path.insert(0, str(src_path))
-
-from lot_info import LotInfo
+# パッケージからインポート
+from ktec_smt_schedule.lot_info import LotInfo
 
 
 class TestLotInfo:
